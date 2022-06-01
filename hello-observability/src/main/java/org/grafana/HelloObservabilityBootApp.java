@@ -9,6 +9,8 @@ import io.prometheus.client.hotspot.DefaultExports;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
@@ -21,6 +23,8 @@ import java.io.IOException;
 @SpringBootApplication
 @RestController
 public class HelloObservabilityBootApp {
+
+	Logger logger = LoggerFactory.getLogger(HelloObservabilityBootApp.class);
 
 	private final OkHttpClient client = new OkHttpClient();
 
@@ -65,13 +69,16 @@ public class HelloObservabilityBootApp {
 
 			// Randomly sleeps a bit
 			try {
+				logger.warn("The application is slow!");
 				Thread.sleep((long) (Math.random() * 1000));
 			} catch (InterruptedException e) {
+				logger.error("IOException happened!");
 				throw new IOException(e);
 			}
 
 			Request request = new Request.Builder().url("http://localhost:8080/observability").build();
 			try (Response response = client.newCall(request).execute()) {
+				logger.info("Normal response is printed");
 				return "Hello, " + response.body().string() + "!\n";
 			}
 		} finally {
@@ -86,7 +93,7 @@ public class HelloObservabilityBootApp {
 		requestCounter.labels(path).inc();
 		lastRequestTimestamp.labels(path).setToCurrentTime();
 		Histogram.Timer histogramRequestTimer = requestDurationHistogram.labels(path).startTimer();
-		Summary.Timer summaryRequestTimer = requestDurationSummary.labels(path).startTimer();		
+		Summary.Timer summaryRequestTimer = requestDurationSummary.labels(path).startTimer();
 
 		try {
 			// Generate some random errors
@@ -109,6 +116,7 @@ public class HelloObservabilityBootApp {
 
 	private void randomError(String path) throws IOException {
 		if (Math.random() > 0.9) {
+			logger.error("Random error with " + path + "!");
 			throw new IOException("Random error with " + path + "!");
 		}
 	}

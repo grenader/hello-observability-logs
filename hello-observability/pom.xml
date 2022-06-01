@@ -9,13 +9,17 @@
   </parent>
 
   <artifactId>hello-observability</artifactId>
-  <name>Observability demo app</name>
+  <name>Observability Logs demo app</name>
   <version>2.6.3-SNAPSHOT</version>
 
   <dependencies>
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-actuator</artifactId>
     </dependency>
     <dependency>
       <groupId>io.prometheus</groupId>

@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-obs-logs
+  labels:
+    app: hello-obs-logs-java
+spec:
+  selector:
+    matchLabels:
+      app: hello-obs-logs-java
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: hello-obs-logs-java
+    spec:
+      containers:
+        - name: java
+          image: grenader/hello-observability:logs-v2
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
